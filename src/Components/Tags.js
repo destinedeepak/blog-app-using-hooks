@@ -27,7 +27,7 @@ export default class Tags extends Component {
           {tags.map((tag) => (
             <li
               key={tag}
-              className={`border rounded-lg text-sm mr-1 px-1 mb-2 text-white ${
+              className={`border rounded-lg text-sm mr-1 px-1 mb-2 text-white cursor-pointer ${
                 activeNav === tag ? 'bg-primary' : 'bg-gray-400'
               }`}
               onClick={() => {
