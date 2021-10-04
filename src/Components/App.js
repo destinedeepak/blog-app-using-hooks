@@ -58,9 +58,12 @@ class App extends Component {
       <div>
         <Header isUserLogged={isUserLogged} user={user} />
         {this.state.isUserLogged ? (
-          <AuthenticatedApp />
+          <AuthenticatedApp user={user} isUserLogged={isUserLogged} />
         ) : (
-          <UnAuthenticatedApp updateUser={this.updateUser} />
+          <UnAuthenticatedApp
+            updateUser={this.updateUser}
+            isUserLogged={isUserLogged}
+          />
         )}
       </div>
     );
@@ -68,45 +71,49 @@ class App extends Component {
 }
 
 function AuthenticatedApp(props) {
-  return(
+  return (
     <Switch>
-    <Route exact path="/">
-      <Home />
-    </Route>
-    <Route path="/articles/:slug" component={SinglePost} />
-    <Route path="/new-post">
-      <NewPost />
-    </Route>
-    <Route path="/setting">
-      <Setting />
-    </Route>
-    <Route path="/profile">
-      <Profile />
-    </Route>
-    <Route path="*">
-      <NoMatch />
-    </Route>
-  </Switch>
-  )
+      <Route exact path="/">
+        <Home />
+      </Route>
+      <Route path="/articles/:slug">
+        <SinglePost isUserLogged={props.isUserLogged} />
+      </Route>
+      <Route path="/new-post">
+        <NewPost user={props.user} />
+      </Route>
+      <Route path="/setting">
+        <Setting />
+      </Route>
+      <Route path="/profile">
+        <Profile user={props.user} />
+      </Route>
+      <Route path="*">
+        <NoMatch />
+      </Route>
+    </Switch>
+  );
 }
 function UnAuthenticatedApp(props) {
-  return(
+  return (
     <Switch>
-    <Route exact path="/">
-      <Home />
-    </Route>
-    <Route path="/articles/:slug" component={SinglePost} />
-    <Route path="/login">
-      <Login updateUser={props.updateUser} />
-    </Route>
-    <Route path="/signup">
-      <SignUp updateUser={props.updateUser} />
-    </Route>
-    <Route path="*">
-      <NoMatch />
-    </Route>
-  </Switch>
-  )
+      <Route exact path="/">
+        <Home />
+      </Route>
+      <Route path="/articles/:slug">
+        <SinglePost isUserLogged={props.isUserLogged} />
+      </Route>
+      <Route path="/login">
+        <Login updateUser={props.updateUser} />
+      </Route>
+      <Route path="/signup">
+        <SignUp updateUser={props.updateUser} />
+      </Route>
+      <Route path="*">
+        <NoMatch />
+      </Route>
+    </Switch>
+  );
 }
 
 export default App;

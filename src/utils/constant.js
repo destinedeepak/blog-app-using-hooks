@@ -6,7 +6,6 @@ const LOGIN_URL = BASE_URL + 'users/login';
 
 const PROFILE_URL = BASE_URL + 'user';
 const LocalStorageKey = 'app_user';
-
 export {
   BASE_URL,
   ARTICLES_URL,
@@ -14,5 +13,5 @@ export {
   SIGNUP_URL,
   LOGIN_URL,
   PROFILE_URL,
-  LocalStorageKey,
+  LocalStorageKey
 };
