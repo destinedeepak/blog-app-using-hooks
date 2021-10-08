@@ -7,7 +7,7 @@ export default function Post(props) {
       <div className="flex justify-between">
         <div className="flex items-center">
           <img
-            className="w-8 rounded-full h-8"
+            className="w-8 rounded-full h-8 object-cover"
             src={author.image}
             alt={author.name}
           />

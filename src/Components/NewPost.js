@@ -54,6 +54,7 @@ class NewPost extends Component {
       })
       .then((article) => {
         console.log(article);
+        this.setState({ title: '', description: '', article: '', tagList: '' });
         this.props.history.push('/');
       })
       .catch((errors) => {

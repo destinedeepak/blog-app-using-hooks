@@ -58,7 +58,11 @@ class App extends Component {
       <div>
         <Header isUserLogged={isUserLogged} user={user} />
         {this.state.isUserLogged ? (
-          <AuthenticatedApp user={user} isUserLogged={isUserLogged} />
+          <AuthenticatedApp
+            user={user}
+            isUserLogged={isUserLogged}
+            updateUser={this.updateUser}
+          />
         ) : (
           <UnAuthenticatedApp
             updateUser={this.updateUser}
@@ -77,13 +81,13 @@ function AuthenticatedApp(props) {
         <Home />
       </Route>
       <Route path="/articles/:slug">
-        <SinglePost isUserLogged={props.isUserLogged} />
+        <SinglePost isUserLogged={props.isUserLogged} user={props.user} />
       </Route>
       <Route path="/new-post">
         <NewPost user={props.user} />
       </Route>
       <Route path="/setting">
-        <Setting />
+        <Setting user={props.user} updateUser={props.updateUser} />
       </Route>
       <Route path="/profile">
         <Profile user={props.user} />
@@ -101,7 +105,7 @@ function UnAuthenticatedApp(props) {
         <Home />
       </Route>
       <Route path="/articles/:slug">
-        <SinglePost isUserLogged={props.isUserLogged} />
+        <SinglePost isUserLogged={props.isUserLogged} user={props.user} />
       </Route>
       <Route path="/login">
         <Login updateUser={props.updateUser} />

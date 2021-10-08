@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ARTICLES_URL } from '../utils/constant';
 import Loader from './Loader';
+import CommentBox from './CommentBox';
 import { Link, withRouter } from 'react-router-dom';
 class SinglePost extends Component {
   state = { article: null, error: null };
@@ -20,7 +21,6 @@ class SinglePost extends Component {
       });
   }
   render() {
-    console.log(this.props.isUserLogged, 'g');
     if (this.state.error)
       return (
         <p className="text-red-500 mt-8 text-lg text-center">
@@ -75,6 +75,10 @@ class SinglePost extends Component {
         ) : (
           ''
         )}
+        <CommentBox
+          slug={this.props.match.params.slug}
+          user={this.props.user}
+        />
       </section>
     );
   }

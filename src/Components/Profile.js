@@ -19,7 +19,7 @@ export default class Profile extends Component {
   };
   fetchData() {
     let { token, username } = this.props.user;
-    console.log(token, username);
+    // console.log(token, username);
     // ?author=jake
     fetch(`${ARTICLES_URL}?${this.state.activeTab}=${username}`, {
       method: 'GET',
