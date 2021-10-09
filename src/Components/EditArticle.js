@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import { ARTICLES_URL } from '../utils/constant';
 import validate from '../utils/validate';
 import { withRouter } from 'react-router-dom';
+import Loader from './Loader';
 
-class NewPost extends Component {
+class EditArticle extends Component {
   state = {
     title: '',
     description: '',
     body: '',
     tagList: '',
+    error: '',
+    isDataFetched: false,
     errors: {
       title: '',
       description: '',
@@ -16,6 +19,28 @@ class NewPost extends Component {
       tagList: '',
     },
   };
+  componentDidMount() {
+    let slug = this.props.match.params.slug;
+    fetch(ARTICLES_URL + '/' + slug)
+      .then((res) => {
+        if (!res.ok) throw new Error(res.statusText);
+        else return res.json();
+      })
+      .then((data) => {
+        let { title, body, description, tagList } = data.article;
+        tagList = tagList.join();
+        this.setState({
+          title,
+          body,
+          description,
+          tagList,
+          isDataFetched: true,
+        });
+      })
+      .catch((error) => {
+        this.setState({ error: 'Unable to fetch article!' });
+      });
+  }
 
   handleChange = (event) => {
     let { name, value } = event.target;
@@ -25,21 +50,23 @@ class NewPost extends Component {
   };
   handleSubmit = (event) => {
     event.preventDefault();
-    this.fetchData();
+    this.fetchArticle();
   };
-  fetchData() {
+
+  fetchArticle() {
+    let slug = this.props.match.params.slug;
     let { title, description, body, tagList } = this.state;
     tagList = tagList.split(',').map((ele) => ele.trim());
     let data = {
       article: {
         title,
         description,
-        body,
         tagList,
+        body,
       },
     };
-    fetch(ARTICLES_URL, {
-      method: 'POST',
+    fetch(ARTICLES_URL + '/' + slug, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Token ' + this.props.user.token,
@@ -52,16 +79,21 @@ class NewPost extends Component {
         }
         return res.json();
       })
-      .then((body) => {
-        this.setState({ title: '', description: '', body: '', tagList: '' });
-        this.props.history.push('/');
-      })
-      .catch((errors) => {
-        console.log(errors);
+      .then((article) => {
+        this.setState(
+          { title: '', description: '', body: '', tagList: '' },
+          () => {
+            this.props.history.push(
+              `/articles/${this.props.match.params.slug}`
+            );
+          }
+        );
       });
   }
+
   render() {
     let { errors, title, description, body, tagList } = this.state;
+    if (!this.state.isDataFetched) return <Loader />;
     return (
       <section className="text-center pt-14 px-64">
         <form onSubmit={this.handleSubmit}>
@@ -91,7 +123,7 @@ class NewPost extends Component {
             placeholder="Write your article (in markdown)"
             value={body}
           ></textarea>
-          <span className="text-red-500 block">{errors.article}</span>
+          <span className="text-red-500 block">{errors.body}</span>
           <input
             onChange={this.handleChange}
             name="tagList"
@@ -112,7 +144,7 @@ class NewPost extends Component {
                 errors.tagList
               }
             >
-              Publish Article
+              Update Article
             </button>
           </div>
         </form>
@@ -121,4 +153,4 @@ class NewPost extends Component {
   }
 }
 
-export default withRouter(NewPost);
+export default withRouter(EditArticle);

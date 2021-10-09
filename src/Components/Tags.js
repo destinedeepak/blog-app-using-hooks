@@ -15,7 +15,7 @@ export default class Tags extends Component {
   }
   render() {
     let { tags, error } = this.state;
-    let { activeNav, addTagTab } = this.props;
+    let { activeTag, addTagTab } = this.props;
     if (error) {
       return <p className="text-3xl text-center mt-4 text-red-500">{error}</p>;
     }
@@ -28,7 +28,7 @@ export default class Tags extends Component {
             <li
               key={tag}
               className={`border rounded-lg text-sm mr-1 px-1 mb-2 text-white cursor-pointer ${
-                activeNav === tag ? 'bg-primary' : 'bg-gray-400'
+                activeTag === tag ? 'bg-primary' : 'bg-gray-400'
               }`}
               onClick={() => {
                 addTagTab(tag);

@@ -6,7 +6,11 @@ export default function Header(props) {
       <button className="text-primary font-bold text-2xl py-3">
         <Link to="/">conduit</Link>
       </button>
-      {props.isUserLogged ? <AuthHeader user={props.user} /> : <NonAuthHeader />}
+      {props.isUserLogged ? (
+        <AuthHeader user={props.user} />
+      ) : (
+        <NonAuthHeader />
+      )}
     </header>
   );
 }
@@ -43,17 +47,20 @@ function AuthHeader(props) {
       </button>
       <button className="text-gray-400 ml-6">
         <NavLink activeClassName="active" to="/new-post">
-        <i className="fas fa-edit"></i>New Article
+          <i className="fas fa-edit"></i>New Article
         </NavLink>
       </button>
       <button className="text-gray-400 ml-6">
         <NavLink activeClassName="active" to="/setting">
-        <i className="fas fa-cog"></i> Setting
+          <i className="fas fa-cog"></i> Setting
         </NavLink>
       </button>
       <button className="text-gray-400 ml-6">
-        <NavLink activeClassName="active" to="/profile">
-        <i className="fas fa-user"></i> {props.user.username}
+        <NavLink
+          activeClassName="active"
+          to={`/profile/${props.user.username}`}
+        >
+          <i className="fas fa-user"></i> {props.user.username}
         </NavLink>
       </button>
     </div>

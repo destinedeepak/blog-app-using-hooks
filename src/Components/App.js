@@ -9,9 +9,10 @@ import { Switch } from 'react-router-dom';
 import SinglePost from './SinglePost';
 import Setting from './Setting';
 import React, { Component } from 'react';
-import { LocalStorageKey, PROFILE_URL } from '../utils/constant';
+import { LocalStorageKey, CURRENT_USER_URL } from '../utils/constant';
 import Loader from './Loader';
 import Profile from './Profile';
+import EditArticle from './EditArticle';
 
 class App extends Component {
   state = {
@@ -22,7 +23,7 @@ class App extends Component {
   componentDidMount() {
     let token = localStorage[LocalStorageKey];
     if (token) {
-      fetch(PROFILE_URL, {
+      fetch(CURRENT_USER_URL, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +79,7 @@ function AuthenticatedApp(props) {
   return (
     <Switch>
       <Route exact path="/">
-        <Home />
+        <Home user={props.user} />
       </Route>
       <Route path="/articles/:slug">
         <SinglePost isUserLogged={props.isUserLogged} user={props.user} />
@@ -86,10 +87,13 @@ function AuthenticatedApp(props) {
       <Route path="/new-post">
         <NewPost user={props.user} />
       </Route>
+      <Route path="/edit-article/:slug">
+        <EditArticle user={props.user} />
+      </Route>
       <Route path="/setting">
         <Setting user={props.user} updateUser={props.updateUser} />
       </Route>
-      <Route path="/profile">
+      <Route path="/profile/:username" exact>
         <Profile user={props.user} />
       </Route>
       <Route path="*">
@@ -102,7 +106,7 @@ function UnAuthenticatedApp(props) {
   return (
     <Switch>
       <Route exact path="/">
-        <Home />
+        <Home user={props.user} />
       </Route>
       <Route path="/articles/:slug">
         <SinglePost isUserLogged={props.isUserLogged} user={props.user} />
@@ -112,6 +116,9 @@ function UnAuthenticatedApp(props) {
       </Route>
       <Route path="/signup">
         <SignUp updateUser={props.updateUser} />
+      </Route>
+      <Route path="/profile/:username" exact>
+        <Profile user={props.user} />
       </Route>
       <Route path="*">
         <NoMatch />

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { ARTICLES_URL } from '../utils/constant';
-import validate from '../utils/validate';
 import Comment from './Comments';
 export default class CommentBox extends Component {
   state = {
+    comments: null,
+    errors: null,
     body: '',
   };
   handleChange = (event) => {
@@ -24,7 +25,38 @@ export default class CommentBox extends Component {
         Authorization: 'Token ' + this.props.user.token,
       },
       body: JSON.stringify(body),
-    }).then(res=>res.json()).then(console.log)
+    })
+      .then((res) => {
+        if (!res.ok)
+          return res.json((error) =>
+            Promise.reject('Unable to post comments!')
+          );
+        return res.json();
+      })
+      .then(this.fetchComments, this.setState({ body: '' }))
+      .catch((errors) => {
+        this.setState({ errors: errors });
+      });
+  };
+
+  fetchComments = () => {
+    fetch(ARTICLES_URL + `/${this.props.slug}/comments`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + this.props.user.token,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((errors) => Promise.reject());
+        }
+        return res.json();
+      })
+      .then((data) => this.setState({ comments: data.comments }))
+      .catch((errors) =>
+        this.setState({ errors: 'Unable to fetch comments!' })
+      );
   };
   render() {
     return (
@@ -58,7 +90,12 @@ export default class CommentBox extends Component {
             </button>
           </div>
         </form>
-        <Comment slug={this.props.slug} user={this.props.user} />
+        <Comment
+          slug={this.props.slug}
+          user={this.props.user}
+          fetchComments={this.fetchComments}
+          state={this.state}
+        />
       </section>
     );
   }

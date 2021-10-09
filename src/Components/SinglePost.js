@@ -3,6 +3,7 @@ import { ARTICLES_URL } from '../utils/constant';
 import Loader from './Loader';
 import CommentBox from './CommentBox';
 import { Link, withRouter } from 'react-router-dom';
+import moment from 'moment';
 class SinglePost extends Component {
   state = { article: null, error: null };
   componentDidMount() {
@@ -13,13 +14,29 @@ class SinglePost extends Component {
         else return res.json();
       })
       .then((data) => {
-        console.log(data);
         this.setState({ article: data.article });
       })
       .catch((error) => {
         this.setState({ error: 'Unable to fetch article!' });
       });
   }
+  handleDelete = (slug) => {
+    // DELETE /api/articles/:slug
+    fetch(ARTICLES_URL + '/' + slug, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + this.props.user.token,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return Promise.reject('Unable to delete!');
+        }
+      })
+      .then(this.props.history.push('/'))
+      .catch((error) => this.setState({ error }));
+  };
   render() {
     if (this.state.error)
       return (
@@ -28,26 +45,45 @@ class SinglePost extends Component {
         </p>
       );
     if (!this.state.article) return <Loader />;
-    let { author, createdAt, title, tagList, description } = this.state.article;
+    let { author, createdAt, title, tagList, body, slug } = this.state.article;
     return (
       <section className="px-40">
         <div className="bg-secondary py-8 pl-40">
           <h1 className="text-white text-5xl mb-8">{title}</h1>
           <div className="flex items-center">
             <img
-              className="w-8 rounded-full h-8"
+              className="w-8 rounded-full h-8 object-cover"
               src={author.image}
               alt={author.username}
             />
             <div className="ml-1">
-              <h4 className="text-primary negmb">{title}</h4>
+              <h4 className="text-primary negmb">{author.username}</h4>
               <time dateTime="" className="text-xs text-gray-400 inline-block">
-                {createdAt}
+                {moment(createdAt).format('ddd MMM D YYYY')}
               </time>
             </div>
+            {this.props.user.username === author.username ? (
+              <div>
+                <button className="border border-gray-400 rounded ml-6 px-3 text-sm py-1 text-gray-400 hover:bg-gray-400 hover:text-white">
+                  <Link to={`/edit-article/${slug}`}>
+                    <i class="fas fa-edit"></i> Edit Article
+                  </Link>
+                </button>
+                <button
+                  className="border border-red-400 rounded ml-2 px-3 text-sm py-1 text-red-400 hover:bg-red-400 hover:text-white"
+                  onClick={() => {
+                    this.handleDelete(slug);
+                  }}
+                >
+                  <i class="fas fa-trash-alt"></i> Delete Article
+                </button>
+              </div>
+            ) : (
+              ''
+            )}
           </div>
         </div>
-        <p className="px-40 py-10 text-xl">{description}</p>
+        <p className="px-40 py-10 text-xl">{body}</p>
         <div>
           <ul className="pl-40">
             {tagList.map((tag) => (

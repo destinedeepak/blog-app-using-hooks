@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router';
 import { ARTICLES_URL } from '../utils/constant';
 import Posts from './Posts';
 import ProfileBanner from './ProfileBanner';
 import ProfileFeedNav from './ProfileFeedNav';
-export default class Profile extends Component {
+class Profile extends Component {
   state = {
     activeTab: 'author',
     error: null,
@@ -18,14 +19,11 @@ export default class Profile extends Component {
     });
   };
   fetchData() {
-    let { token, username } = this.props.user;
-    // console.log(token, username);
-    // ?author=jake
+    let { username } = this.props.match.params;
     fetch(`${ARTICLES_URL}?${this.state.activeTab}=${username}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
       },
     })
       .then((res) => {
@@ -39,10 +37,10 @@ export default class Profile extends Component {
   }
   render() {
     let { articles, error, activeTab } = this.state;
-    console.log(articles, error);
+    let { username } = this.props.match.params;
     return (
       <section>
-        <ProfileBanner user={this.props.user} />
+        <ProfileBanner username={username} currentUser={this.props.user} />
         <ProfileFeedNav
           activeTab={activeTab}
           handleActiveTab={this.handleActiveTab}
@@ -54,3 +52,5 @@ export default class Profile extends Component {
     );
   }
 }
+
+export default withRouter(Profile);

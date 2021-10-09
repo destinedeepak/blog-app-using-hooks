@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { PROFILE_URL } from '../utils/constant';
+import { CURRENT_USER_URL } from '../utils/constant';
 import validate from '../utils/validate';
 
 class Setting extends Component {
@@ -40,7 +40,7 @@ class Setting extends Component {
       },
     };
     if (password) body.user.password = password;
-    fetch(PROFILE_URL, {
+    fetch(CURRENT_USER_URL, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

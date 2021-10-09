@@ -27,9 +27,9 @@ export default function validate(errors, name, value) {
       let descriptionError = value.length === 0 ? 'field can not be empty!' : '';
       errors.description = descriptionError;
       break;
-    case 'article':
+    case 'body':
       let articleError = value.length === 0 ? 'field can not be empty!' : '';
-      errors.article = articleError;
+      errors.body = articleError;
       break;
     case 'tagList':
       let tagListError = value.length === 0 ? 'field can not be empty!' : '';
