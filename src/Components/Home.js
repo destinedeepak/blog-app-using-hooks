@@ -88,6 +88,7 @@ export default class Home extends Component {
                 activeTag={activeTag}
                 activeNav={activeNav}
                 handleNavigation={this.handleNavigation}
+                user={this.props.user}
               />
               <Posts {...this.state} user = {this.props.user} />
             </div>
