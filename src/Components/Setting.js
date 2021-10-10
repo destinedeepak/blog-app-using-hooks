@@ -28,6 +28,10 @@ class Setting extends Component {
     validate(errors, name, value);
     this.setState({ [name]: value });
   };
+  handleLogout = () => {
+    localStorage.clear();
+    this.props.history.push('/');
+  };
   handleSubmit = (event) => {
     event.preventDefault();
     let { image, username, bio, email, password } = this.state;
@@ -65,14 +69,14 @@ class Setting extends Component {
   render() {
     let { image, username, bio, email, password, errors } = this.state;
     return (
-      <section className="pt-4">
-        <h2 className="text-center text-4xl">Your Setting</h2>
-        <form onSubmit={this.handleSubmit}>
+      <section className="pt-8 px-64">
+        <form onSubmit={this.handleSubmit} className="border p-4 px-8 rounded shadow">
+        <h2 className="text-center text-2xl mt-4">Your Setting</h2>
           <input
             onChange={this.handleChange}
             type="text"
             name="image"
-            className="block w-132 border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4 h-10"
+            className="block w-full border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4 h-10"
             placeholder="URL of profile picture"
             value={image}
           />
@@ -80,7 +84,7 @@ class Setting extends Component {
             onChange={this.handleChange}
             name="username"
             type="text"
-            className="block w-132 border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4"
+            className="block w-full border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4"
             value={username}
           />
           <span className="text-red-500 block text-center">
@@ -89,17 +93,16 @@ class Setting extends Component {
           <textarea
             onChange={this.handleChange}
             name="bio"
-            className="block w-132 border rounded-lg border-gray-300 px-2 py-3 mx-auto mt-4  text-gray-400"
-            rows="8"
+            className="block w-full border rounded-lg border-gray-300 px-2 py-3 mx-auto mt-4  text-gray-400"
+            rows="6"
             placeholder={bio}
             value={bio}
-          >
-          </textarea>
+          ></textarea>
           <input
             onChange={this.handleChange}
             type="email"
             name="email"
-            className="block w-132 border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4"
+            className="block w-full border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4"
             placeholder="Email"
             value={email}
           />
@@ -108,14 +111,14 @@ class Setting extends Component {
             onChange={this.handleChange}
             name="password"
             type="password"
-            className="block w-132 border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4"
+            className="block w-full border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4"
             placeholder="New Password"
             value={password}
           />
           <span className="text-red-500 block text-center">
             {errors.password}
           </span>
-          <div className="w-132 mx-auto text-right pt-8">
+          <div className="w-full mx-auto text-right pt-8">
             <button
               className="bg-primary px-6 py-3 rounded text-white inline-block submit"
               type="submit"
@@ -124,13 +127,15 @@ class Setting extends Component {
               Update Setting
             </button>
           </div>
-          <div className="border-t border-gray-300 w-132 mx-auto mt-8"></div>
-          <div className="w-132 mx-auto text-left pt-8">
-            <button className="border border-red-500 px-6 rounded text-red-500 inline-block submit h-10 hover:bg-red-500 hover:text-white">
+        </form>
+        <div className="w-full mx-auto text-left pt-8">
+            <button
+              className="border border-red-500 px-6 rounded text-red-500 inline-block submit h-10 hover:bg-red-500 hover:text-white"
+              onClick={this.handleLogout}
+            >
               Or click here to logout.
             </button>
           </div>
-        </form>
       </section>
     );
   }

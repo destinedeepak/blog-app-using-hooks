@@ -64,7 +64,8 @@ class NewPost extends Component {
     let { errors, title, description, body, tagList } = this.state;
     return (
       <section className="text-center pt-14 px-64">
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit} className="border p-8 rounded shadow">
+          <h2 className="text-left text-xl">Write your Article...</h2>
           <input
             onChange={this.handleChange}
             type="text"

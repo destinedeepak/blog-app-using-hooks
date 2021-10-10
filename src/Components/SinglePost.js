@@ -48,7 +48,7 @@ class SinglePost extends Component {
     let { author, createdAt, title, tagList, body, slug } = this.state.article;
     return (
       <section className="px-40">
-        <div className="bg-secondary py-8 pl-40">
+        <div className="bg-secondary py-8 pl-40 shadow">
           <h1 className="text-white text-5xl mb-8">{title}</h1>
           <div className="flex items-center">
             <img
@@ -57,7 +57,7 @@ class SinglePost extends Component {
               alt={author.username}
             />
             <div className="ml-1">
-              <h4 className="text-primary negmb">{author.username}</h4>
+              <h4 className="text-primary neg-mb-10">{author.username}</h4>
               <time dateTime="" className="text-xs text-gray-400 inline-block">
                 {moment(createdAt).format('ddd MMM D YYYY')}
               </time>
@@ -83,7 +83,7 @@ class SinglePost extends Component {
             )}
           </div>
         </div>
-        <p className="px-40 py-10 text-xl">{body}</p>
+        <p className="px-40 py-10 text-lg text-gray-600">{body}</p>
         <div>
           <ul className="pl-40">
             {tagList.map((tag) => (

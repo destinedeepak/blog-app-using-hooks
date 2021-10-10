@@ -3,7 +3,7 @@ export default class FeedNav extends Component {
   render() {
     let { activeTag, handleNavigation, activeNav } = this.props;
     return (
-      <nav className="mt-8 pl-4">
+      <nav className="mt-8">
         <ul className="border-b flex">
           {this.props.user && (
             <li

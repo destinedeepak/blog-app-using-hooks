@@ -39,7 +39,7 @@ function NonAuthHeader() {
 
 function AuthHeader(props) {
   return (
-    <div>
+    <div className="font-roboto"> 
       <button className="text-gray-400 ml-6">
         <NavLink exact activeClassName="active" to="/">
           Home

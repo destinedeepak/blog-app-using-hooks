@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
 import { ARTICLES_URL } from '../utils/constant';
+import moment from 'moment';
 
 export default class Post extends Component {
   state = {
@@ -12,7 +13,6 @@ export default class Post extends Component {
     this.setState({ favorited, favoritesCount });
   }
   handleFavorite = (slug) => {
-    // POST /api/articles/:slug/favorite
     let method = this.state.favorited ? 'DELETE' : 'POST';
     let token = this.props.user ? 'Token ' + this.props.user.token : '';
     fetch(ARTICLES_URL + `/${slug}/favorite`, {
@@ -34,7 +34,7 @@ export default class Post extends Component {
       this.props;
     let { favoritesCount, favorited } = this.state;
     return (
-      <section className="mt-4">
+      <section className="mt-10 shadow p-4 rounded">
         <div className="flex justify-between">
           <div className="flex items-center">
             <img
@@ -42,19 +42,19 @@ export default class Post extends Component {
               src={author.image}
               alt={author.name}
             />
-            <div className="ml-1">
-              <h4 className="text-primary">
+            <div className="ml-2">
+              <h4 className="text-primary neg-mb-10 font-roboto">
                 <Link to={`profile/${author.username}`}>{author.username}</Link>
               </h4>
               <time dateTime="" className="text-xs text-gray-400">
-                {createdAt}
+                {moment(createdAt).format('ddd MMM D YYYY')}
               </time>
             </div>
           </div>
           <div>
             {user && (
               <button
-                className={`border border-primary rounded py-1 px-2 text-sm ${
+                className={`border border-primary rounded py-1 px-2 text-sm shadow ${
                   favorited ? 'bg-primary text-white' : 'bg-white text-primary'
                 }`}
                 onClick={() => {
@@ -67,7 +67,7 @@ export default class Post extends Component {
           </div>
         </div>
         <Link to={`/articles/${slug}`}>
-          <h2 className="font-semibold text-2xl">{title}</h2>
+          <h2 className="font-medium text-2xl font-roboto">{title}</h2>
         </Link>
         <Link to={`/articles/${slug}`}>
           <p className="text-gray-400 font-light">{description}</p>
