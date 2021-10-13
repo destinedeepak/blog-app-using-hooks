@@ -16,7 +16,10 @@ class NewPost extends Component {
       tagList: '',
     },
   };
-
+componentDidMount(){
+  let obj = {}
+    obj.push('j')
+}
   handleChange = (event) => {
     let { name, value } = event.target;
     let errors = this.state.errors;

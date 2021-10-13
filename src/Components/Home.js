@@ -24,15 +24,14 @@ export default class Home extends Component {
       prevState.activeTag !== this.state.activeTag ||
       prevState.activeNav !== this.state.activeNav
     ) {
-      console.log('fetch')
       this.fetchData();
     }
   }
   handleNavigation = (tab) => {
-    this.setState({ activeTag: '', activeNav: tab, activePageIndex:0 });
+    this.setState({ activeTag: '', activeNav: tab, activePageIndex: 0 });
   };
   addTagTab = (tag) => {
-    this.setState({ activeTag: tag, activeNav: '', activePageIndex:0 });
+    this.setState({ activeTag: tag, activeNav: '', activePageIndex: 0 });
   };
   fetchData() {
     const limit = this.state.articlePerPage;
@@ -90,18 +89,22 @@ export default class Home extends Component {
                 handleNavigation={this.handleNavigation}
                 user={this.props.user}
               />
-              <Posts {...this.state} user = {this.props.user} />
+              <Posts {...this.state} user={this.props.user} />
             </div>
             <div className="w-3/12 ml-12 mt-4">
               <Tags addTagTab={this.addTagTab} activeTag={activeTag} />
             </div>
           </div>
-          <Pagination
-            articlesCount={articlesCount}
-            articlePerPage={articlePerPage}
-            handlePagination={this.handlePagination}
-            activePageIndex={activePageIndex}
-          />
+          {articlesCount <= 10 ? (
+            ''
+          ) : (
+            <Pagination
+              articlesCount={articlesCount}
+              articlePerPage={articlePerPage}
+              handlePagination={this.handlePagination}
+              activePageIndex={activePageIndex}
+            />
+          )}
         </div>
       </main>
     );

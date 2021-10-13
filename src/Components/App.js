@@ -13,6 +13,7 @@ import { LocalStorageKey, CURRENT_USER_URL } from '../utils/constant';
 import Loader from './Loader';
 import Profile from './Profile';
 import EditArticle from './EditArticle';
+import ErrorBoundary from './ErrorBoundary';
 
 class App extends Component {
   state = {
@@ -57,19 +58,23 @@ class App extends Component {
     let { isUserLogged, user } = this.state;
     return (
       <div>
-        <Header isUserLogged={isUserLogged} user={user} />
-        {this.state.isUserLogged ? (
-          <AuthenticatedApp
-            user={user}
-            isUserLogged={isUserLogged}
-            updateUser={this.updateUser}
-          />
-        ) : (
-          <UnAuthenticatedApp
-            updateUser={this.updateUser}
-            isUserLogged={isUserLogged}
-          />
-        )}
+        <ErrorBoundary>
+          <Header isUserLogged={isUserLogged} user={user} />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          {this.state.isUserLogged ? (
+            <AuthenticatedApp
+              user={user}
+              isUserLogged={isUserLogged}
+              updateUser={this.updateUser}
+            />
+          ) : (
+            <UnAuthenticatedApp
+              updateUser={this.updateUser}
+              isUserLogged={isUserLogged}
+            />
+          )}
+        </ErrorBoundary>
       </div>
     );
   }

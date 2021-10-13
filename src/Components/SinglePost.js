@@ -34,7 +34,9 @@ class SinglePost extends Component {
           return Promise.reject('Unable to delete!');
         }
       })
-      .then(this.props.history.push('/'))
+      .then(() => {
+        this.props.history.push('/');
+      })
       .catch((error) => this.setState({ error }));
   };
   render() {

@@ -1,6 +1,6 @@
 import moment from 'moment';
 export default function Comment(props) {
-  let {id, author, body, createdAt } = props.comment;
+  let { id, author, body, createdAt } = props.comment;
   return (
     <li className="bg-tertiary border rounded border-gray-200 mb-4">
       <p className="bg-white p-4">{body}</p>
@@ -18,14 +18,18 @@ export default function Comment(props) {
             {moment(createdAt).format('ddd MMM D YYYY')}
           </span>
         </div>
-        {
-            author.username === props.user.username ? (<button
-                className="text-gray-400 text-sm px-2 rounded"
-                onClick={()=>{props.handleDelete(id)}}
-              >
-                <i class="fas fa-trash-alt"></i>
-              </button>) : ''
-        }
+        {author.username === props.user.username ? (
+          <button
+            className="text-gray-400 text-sm px-2 rounded hover:bg-gray-400 p-1 hover:text-black"
+            onClick={() => {
+              props.handleDelete(id);
+            }}
+          >
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        ) : (
+          ''
+        )}
       </div>
     </li>
   );
