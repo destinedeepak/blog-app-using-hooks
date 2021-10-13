@@ -4,7 +4,7 @@ class ErrorBoundary extends Component {
   constructor() {
     super();
     this.state = {
-      hasError: '',
+      hasError: false,
     };
   }
   static getDerivedStateFromError(error) {
@@ -12,7 +12,8 @@ class ErrorBoundary extends Component {
   }
 
   handleError = () => {
-      this.props.history.push('/')
+    this.setState({ hasError: false });
+    this.props.history.push('/');
   };
 
   render() {
