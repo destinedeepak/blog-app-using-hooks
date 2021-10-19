@@ -60,6 +60,14 @@ function App() {
     localStorage.setItem(LocalStorageKey, user.token);
   };
 
+  const removeUser = () => {
+      setUserDetails({
+        user: null,
+        isUserLogged: false,
+        userVerifying: false,
+      })
+  };
+
   let { userVerifying, isUserLogged, user } = userDetails;
   if (userVerifying) {
     return <Loader />;
@@ -67,7 +75,12 @@ function App() {
   return (
     <div>
       <UserContext.Provider
-        value={{ isUserLogged, user, updateUser: updateUser }}
+        value={{
+          isUserLogged,
+          user,
+          updateUser: updateUser,
+          removeUser: removeUser,
+        }}
       >
         <ErrorBoundary>
           <Header />
