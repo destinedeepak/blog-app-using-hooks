@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function Pagination(props) {
   let { articlePerPage, articlesCount, handlePagination, activePageIndex } =
     props;
@@ -30,7 +28,7 @@ export default function Pagination(props) {
           {index + 1}
         </span>
       ))}
-      
+
       <button
         className="border w-16 h-10 inline-block text-center leading-10 hover:bg-gray-400 hover:text-white"
         onClick={() => {

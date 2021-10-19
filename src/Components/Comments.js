@@ -1,43 +1,51 @@
-import React, { Component } from 'react';
+import { useEffect, useContext } from 'react';
 import Loader from './Loader';
 import Comment from './Comment';
 import { ARTICLES_URL } from '../utils/constant';
 import UserContext from './UserContext';
-export default class Comments extends Component {
-  static contextType = UserContext;
-  componentDidMount() {
-    this.props.fetchComments();
-  }
-  handleDelete = (id) => {
-    fetch(ARTICLES_URL + `/${this.props.slug}/comments/${id}`, {
+export default function Comments({
+  slug,
+  fetchComments,
+  error,
+  comments,
+  setError,
+}) {
+  let { user } = useContext(UserContext);
+  useEffect(() => {
+    fetchComments();
+  }, []);
+  const handleDelete = (id) => {
+    fetch(ARTICLES_URL + `/${slug}/comments/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Token ' + this.context.user.token,
+        Authorization: 'Token ' + user.token,
       },
-    }).then(this.props.fetchComments)
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Unable to fetch!');
+        }
+        fetchComments();
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
   };
-  render() {
-    if (this.props.state.errors)
-      return (
-        <p className="text-red-500 text-center mt-4">
-          {this.props.state.errors}
-        </p>
-      );
-    if (!this.props.state.comments) return <Loader />;
-    return (
-      <ul className="mt-4 mb-20">
-        {this.props.state.comments.map((comment) => {
-          console.log(comment);
-          return (
-            <Comment
-              comment={comment}
-              key={comment.id}
-              handleDelete={this.handleDelete}
-            />
-          );
-        })}
-      </ul>
-    );
-  }
+
+  if (error) return <p className="text-red-500 text-center mt-4">{error}</p>;
+  if (!comments) return <Loader />;
+  return (
+    <ul className="mt-4 mb-20">
+      {comments.map((comment) => {
+        return (
+          <Comment
+            comment={comment}
+            key={comment.id}
+            handleDelete={handleDelete}
+          />
+        );
+      })}
+    </ul>
+  );
 }

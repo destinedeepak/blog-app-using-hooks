@@ -8,21 +8,22 @@ import NewPost from './NewPost';
 import { Switch } from 'react-router-dom';
 import SinglePost from './SinglePost';
 import Setting from './Setting';
-import React, { Component } from 'react';
 import { LocalStorageKey, CURRENT_USER_URL } from '../utils/constant';
 import Loader from './Loader';
 import Profile from './Profile';
 import EditArticle from './EditArticle';
 import ErrorBoundary from './ErrorBoundary';
 import UserContext from './UserContext';
+import { useState, useEffect } from 'react';
 
-class App extends Component {
-  state = {
+function App() {
+  let intialUserState = {
     user: null,
     isUserLogged: false,
     userVerifying: true,
   };
-  componentDidMount() {
+  const [userDetails, setUserDetails] = useState(intialUserState);
+  useEffect(() => {
     let token = localStorage[LocalStorageKey];
     if (token) {
       fetch(CURRENT_USER_URL, {
@@ -39,43 +40,44 @@ class App extends Component {
           return res.json();
         })
         .then((user) => {
-          this.updateUser(user.user);
+          updateUser(user.user);
         })
         .catch((errors) => {
           console.log(errors);
         });
     } else {
-      this.setState({ userVerifying: false });
+      setUserDetails({ ...userDetails, userVerifying: false });
     }
-  }
-  updateUser = (user) => {
-    this.setState({ user, isUserLogged: true, userVerifying: false });
+  }, []);
+
+  const updateUser = (user) => {
+    setUserDetails({
+      ...userDetails,
+      user: user,
+      isUserLogged: true,
+      userVerifying: false,
+    });
     localStorage.setItem(LocalStorageKey, user.token);
   };
-  render() {
-    if (this.state.userVerifying) {
-      return <Loader />;
-    }
-    let { isUserLogged, user } = this.state;
-    return (
-      <div>
-        <UserContext.Provider
-          value={{ isUserLogged, user, updateUser: this.updateUser }}
-        >
-          <ErrorBoundary>
-            <Header />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            {this.state.isUserLogged ? (
-              <AuthenticatedApp />
-            ) : (
-              <UnAuthenticatedApp />
-            )}
-          </ErrorBoundary>
-        </UserContext.Provider>
-      </div>
-    );
+
+  let { userVerifying, isUserLogged, user } = userDetails;
+  if (userVerifying) {
+    return <Loader />;
   }
+  return (
+    <div>
+      <UserContext.Provider
+        value={{ isUserLogged, user, updateUser: updateUser }}
+      >
+        <ErrorBoundary>
+          <Header />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          {isUserLogged ? <AuthenticatedApp /> : <UnAuthenticatedApp />}
+        </ErrorBoundary>
+      </UserContext.Provider>
+    </div>
+  );
 }
 
 function AuthenticatedApp(props) {

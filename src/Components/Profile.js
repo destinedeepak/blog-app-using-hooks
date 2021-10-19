@@ -1,26 +1,16 @@
-import React, { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { withRouter } from 'react-router';
 import { ARTICLES_URL } from '../utils/constant';
 import Posts from './Posts';
 import ProfileBanner from './ProfileBanner';
 import ProfileFeedNav from './ProfileFeedNav';
-class Profile extends Component {
-  state = {
-    activeTab: 'author',
-    error: null,
-    articles: null,
-  };
-  componentDidMount() {
-    this.fetchData({});
-  }
-  handleActiveTab = (label) => {
-    this.setState({ activeTab: label }, () => {
-      this.fetchData({});
-    });
-  };
-  fetchData() {
-    let { username } = this.props.match.params;
-    fetch(`${ARTICLES_URL}?${this.state.activeTab}=${username}`, {
+function Profile(props) {
+  const [activeTab, setActiveTab] = useState('author');
+  const [articles, setArticles] = useState(null);
+  const [error, setError] = useState(null);
+  let { username } = props.match.params;
+  useEffect(() => {
+    fetch(`${ARTICLES_URL}?${activeTab}=${username}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -32,25 +22,22 @@ class Profile extends Component {
         }
         return res.json();
       })
-      .then((data) => this.setState({ articles: data.articles }))
-      .catch((error) => this.setState({ error }));
-  }
-  render() {
-    let { articles, error, activeTab } = this.state;
-    let { username } = this.props.match.params;
-    return (
-      <section>
-        <ProfileBanner username={username} />
-        <ProfileFeedNav
-          activeTab={activeTab}
-          handleActiveTab={this.handleActiveTab}
-        />
-        <div className="px-60">
-          <Posts articles={articles} error={error} />
-        </div>
-      </section>
-    );
-  }
+      .then((data) => setArticles(data.articles))
+      .catch((error) => setError(error));
+  }, [activeTab]);
+  const handleActiveTab = (label) => {
+    setActiveTab(label);
+  };
+
+  return (
+    <section>
+      <ProfileBanner username={username} />
+      <ProfileFeedNav activeTab={activeTab} handleActiveTab={handleActiveTab} />
+      <div className="px-60">
+        <Posts articles={articles} error={error} />
+      </div>
+    </section>
+  );
 }
 
 export default withRouter(Profile);

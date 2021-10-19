@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import { useState, useContext } from 'react';
 import { SIGNUP_URL } from '../utils/constant';
 import validate from '../utils/validate';
 import { withRouter } from 'react-router';
 import UserContext from './UserContext';
-class SignUp extends Component {
-  state = {
+function SignUp (props) {
+  const initialUserState = {
     username: '',
     email: '',
     password: '',
@@ -14,20 +14,27 @@ class SignUp extends Component {
       password: '',
     },
   };
-  static contextType = UserContext;
-  handleChange = (event) => {
+  const [user, setUser] = useState(initialUserState);
+  let {username, email, password, errors} = user;
+  const {updateUser} =  useContext(UserContext)
+
+  const handleChange = (event) => {
     let { name, value } = event.target;
-    let { errors } = this.state;
     validate(errors, name, value);
-    this.setState({ [name]: value });
+    setUser((user)=>{
+      return{
+        ...user,
+         [name]: value 
+      }
+    })
   };
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     let data = {
       user: {
-        username: this.state.username,
-        email: this.state.email,
-        password: this.state.password,
+        username,
+        email,
+        password,
       },
     };
     fetch(SIGNUP_URL, {
@@ -46,21 +53,24 @@ class SignUp extends Component {
         return res.json();
       })
       .then((user) => {
-        this.context.updateUser(user.user);
-        this.setState({ username: '', email: '', password: '' });
-        this.props.history.push('/');
+        updateUser(user.user);
+        setUser(initialUserState);
+        props.history.push('/');
       })
-      .catch((errors) => this.setState({ errors }));
+      .catch((errors)=>{setUser((user)=>{
+        return{
+          ...user,
+          errors 
+        }
+      })})
   };
-  render() {
-    let { username, email, password, errors } = this.state;
     return (
       <section className="text-center pt-14">
         <h2 className="text-4xl">Sign Up</h2>
         <button className="text-primary mt-2">Have an account?</button>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <input
-            onChange={this.handleChange}
+            onChange={handleChange}
             type="text"
             name="username"
             className="block w-132 border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4 text-lg"
@@ -69,7 +79,7 @@ class SignUp extends Component {
           />
           <span className="text-red-500">{errors.username}</span>
           <input
-            onChange={this.handleChange}
+            onChange={handleChange}
             type="email"
             name="email"
             className="block w-132 border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4 text-lg"
@@ -78,7 +88,7 @@ class SignUp extends Component {
           />
           <span className="text-red-500">{errors.email}</span>
           <input
-            onChange={this.handleChange}
+            onChange={handleChange}
             type="password"
             name="password"
             className="block w-132 border rounded-lg border-gray-300 px-2  py-3 mx-auto mt-4 text-lg"
@@ -96,7 +106,7 @@ class SignUp extends Component {
         </form>
       </section>
     );
-  }
+  
 }
 
 export default withRouter(SignUp);

@@ -1,44 +1,42 @@
-import React, { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { TAGS_URL } from '../utils/constant';
 import Loader from './Loader';
 
-export default class Tags extends Component {
-  state = { tags: null, error: null };
-  componentDidMount() {
+export default function Tags({ activeTag, addTagTab }) {
+  const [tags, setTags] = useState(null);
+  const [error, setError] = useState(null);
+  useEffect(() => {
     fetch(TAGS_URL)
       .then((res) => {
         if (!res.ok) throw new Error(res.statusText);
         else return res.json();
       })
-      .then((data) => this.setState({ tags: data.tags.filter(tag=>tag) }))
-      .catch((error) => this.setState({ error: 'Not able to fetch data!' }));
+      .then((data) => setTags(data.tags.filter((tag) => tag)))
+      .catch((error) => setError('Not able to fetch data!'));
+  }, []);
+
+  if (error) {
+    return <p className="text-3xl text-center mt-4 text-red-500">{error}</p>;
   }
-  render() {
-    let { tags, error } = this.state;
-    let { activeTag, addTagTab } = this.props;
-    if (error) {
-      return <p className="text-3xl text-center mt-4 text-red-500">{error}</p>;
-    }
-    if (!tags) return <Loader />;
-    return (
-      <aside className="bg-gray-100 rounded p-2">
-        <h3 className="mb-4 text-lg">Popular Tags</h3>
-        <ul className="flex flex-wrap">
-          {tags.map((tag) => (
-            <li
-              key={tag}
-              className={`border rounded-lg text-sm mr-1 px-1 mb-2 text-white cursor-pointer ${
-                activeTag === tag ? 'bg-primary' : 'bg-gray-400'
-              }`}
-              onClick={() => {
-                addTagTab(tag);
-              }}
-            >
-              {tag.length === 0 ? '' : tag}
-            </li>
-          ))}
-        </ul>
-      </aside>
-    );
-  }
+  if (!tags) return <Loader />;
+  return (
+    <aside className="bg-gray-100 rounded p-2">
+      <h3 className="mb-4 text-lg">Popular Tags</h3>
+      <ul className="flex flex-wrap">
+        {tags.map((tag) => (
+          <li
+            key={tag}
+            className={`border rounded-lg text-sm mr-1 px-1 mb-2 text-white cursor-pointer ${
+              activeTag === tag ? 'bg-primary' : 'bg-gray-400'
+            }`}
+            onClick={() => {
+              addTagTab(tag);
+            }}
+          >
+            {tag.length === 0 ? '' : tag}
+          </li>
+        ))}
+      </ul>
+    </aside>
+  );
 }
