@@ -10,6 +10,6 @@ export default function Posts(props) {
       <h1 className="text-center text-3xl mt-8">No articles available!</h1>
     );
   return articles.map((article) => (
-    <Post user={props.user} {...article} key={article.slug} />
+    <Post  {...article} key={article.slug} />
   ));
 }

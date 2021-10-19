@@ -1,32 +1,31 @@
-import React, { Component } from 'react';
+import { useState, useContext } from 'react';
 import { ARTICLES_URL } from '../utils/constant';
-import Comment from './Comments';
+import Comments from './Comments';
 import UserContext from './UserContext';
-export default class CommentBox extends Component {
-  state = {
-    comments: null,
-    errors: null,
-    body: '',
+export default function CommentBox({ slug }) {
+  const [comments, setComments] = useState(null);
+  const [error, setError] = useState(null);
+  const [body, setBody] = useState('');
+
+  let { user } = useContext(UserContext);
+
+  const handleChange = (event) => {
+    setBody(event.target.value);
   };
-  static contextType = UserContext;
-  handleChange = (event) => {
-    let { name, value } = event.target;
-    this.setState({ [name]: value });
-  };
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    let body = {
+    let commentBody = {
       comment: {
-        body: this.state.body,
+        body,
       },
     };
-    fetch(ARTICLES_URL + `/${this.props.slug}/comments`, {
+    fetch(ARTICLES_URL + `/${slug}/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Token ' + this.context.user.token,
+        Authorization: 'Token ' + user.token,
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(commentBody),
     })
       .then((res) => {
         if (!res.ok)
@@ -36,71 +35,70 @@ export default class CommentBox extends Component {
         return res.json();
       })
       .then(() => {
-        this.fetchComments();
-        this.setState({ body: '' });
+        fetchComments();
+        setBody('');
       })
-      .catch((errors) => {
-        this.setState({ errors: errors });
+      .catch((error) => {
+        setError(error);
       });
   };
 
-  fetchComments = () => {
-    fetch(ARTICLES_URL + `/${this.props.slug}/comments`, {
+  const fetchComments = () => {
+    fetch(ARTICLES_URL + `/${slug}/comments`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Token ' + this.context.user.token,
+        Authorization: 'Token ' + user.token,
       },
     })
       .then((res) => {
         if (!res.ok) {
-          return res.json().then((errors) => Promise.reject());
+          return res.json().then((error) => Promise.reject());
         }
         return res.json();
       })
-      .then((data) => this.setState({ comments: data.comments }))
-      .catch((errors) =>
-        this.setState({ errors: 'Unable to fetch comments!' })
+      .then((data) => setComments(data.comments))
+
+      .catch((error) =>
+        setError(error)
       );
   };
-  render() {
-    return (
-      <section className="px-48 pt-12">
-        <form
-          className="border rounded border-gray-200"
-          onSubmit={this.handleSubmit}
-        >
-          <textarea
-            name="body"
-            rows="3"
-            className=" w-full text-gray-400 p-4"
-            onChange={this.handleChange}
-            placeholder="Write a comment..."
-            value={this.state.body}
-            required={true}
-          ></textarea>
-          <div className="flex bg-tertiary flex justify-between p-4 border-t border-gray-200">
-            <div>
-              <img
-                className="w-6 rounded-full h-6 object-cover"
-                src="https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg"
-                alt=""
-              />
-            </div>
-            <button
-              className="bg-primary text-white text-sm px-2 rounded"
-              type="submit"
-            >
-              Post Comment
-            </button>
+
+  return (
+    <section className="px-48 pt-12">
+      <form className="border rounded border-gray-200" onSubmit={handleSubmit}>
+        <textarea
+          name="body"
+          rows="3"
+          className=" w-full text-gray-400 p-4"
+          onChange={handleChange}
+          placeholder="Write a comment..."
+          value={body}
+          required={true}
+        ></textarea>
+        <div className="flex bg-tertiary flex justify-between p-4 border-t border-gray-200">
+          <div>
+            <img
+              className="w-6 rounded-full h-6 object-cover"
+              src="https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg"
+              alt=""
+            />
           </div>
-        </form>
-        <Comment
-          slug={this.props.slug}
-          fetchComments={this.fetchComments}
-          state={this.state}
-        />
-      </section>
-    );
-  }
+          <button
+            className="bg-primary text-white text-sm px-2 rounded"
+            type="submit"
+          >
+            Post Comment
+          </button>
+        </div>
+      </form>
+      <Comments
+        slug={slug}
+        fetchComments={fetchComments}
+        comments={comments}
+        error={error}
+        setError={setError}
+      />
+    </section>
+  );
 }

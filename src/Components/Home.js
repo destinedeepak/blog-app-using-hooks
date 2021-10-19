@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import Posts from './Posts';
 // import Banner from './Banner';
 import Tags from './Tags';
@@ -6,8 +5,10 @@ import { ARTICLES_URL } from '../utils/constant';
 import Pagination from './Pagination';
 import FeedNav from './FeedNav';
 import UserContext from './UserContext';
-export default class Home extends Component {
-  state = {
+import { useState, useEffect, useContext } from 'react';
+
+export default function Home() {
+  const articleDetailsInitialState = {
     articles: null,
     error: null,
     articlesCount: 0,
@@ -16,35 +17,24 @@ export default class Home extends Component {
     activeNav: 'global',
     activeTag: '',
   };
-  static contextType = UserContext;
-  componentDidMount() {
-    this.fetchData();
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.activePageIndex !== this.state.activePageIndex ||
-      prevState.activeTag !== this.state.activeTag ||
-      prevState.activeNav !== this.state.activeNav
-    ) {
-      this.fetchData();
-    }
-  }
-  handleNavigation = (tab) => {
-    this.setState({ activeTag: '', activeNav: tab, activePageIndex: 0 });
-  };
-  addTagTab = (tag) => {
-    this.setState({ activeTag: tag, activeNav: '', activePageIndex: 0 });
-  };
-  fetchData() {
-    const limit = this.state.articlePerPage;
-    const offset = this.state.activePageIndex * 10;
-    const tag = this.state.activeTag;
-    let feed = this.state.activeNav === 'your' ? '/feed' : '';
-    let token = this.context.user ? 'Token ' + this.context.user.token : '';
+  const [articleDetails, setArticleDetails] = useState(
+    articleDetailsInitialState
+  );
+  let { articlesCount, articlePerPage, activePageIndex, activeTag, activeNav } =
+    articleDetails;
+
+  let { user } = useContext(UserContext);
+
+  useEffect(() => {
+    const limit = articlePerPage;
+    const offset = activePageIndex * 10;
+    const tag = activeTag;
+    let feed = activeNav === 'your' ? '/feed' : '';
+    let token = user ? 'Token ' + user.token : '';
     fetch(
       ARTICLES_URL +
         `${feed}/?limit=${limit}
-        &offset=${offset}` +
+          &offset=${offset}` +
         (tag && `&tag=${tag}`),
       {
         method: 'GET',
@@ -59,55 +49,79 @@ export default class Home extends Component {
         else return res.json();
       })
       .then((data) =>
-        this.setState({
-          articles: data.articles,
-          articlesCount: data.articlesCount,
+        setArticleDetails((articleDetails) => {
+          return {
+            ...articleDetails,
+            articles: data.articles,
+            articlesCount: data.articlesCount,
+          };
         })
       )
       .catch((error) =>
-        this.setState({ error: 'Not able to fetch articles!' })
+        setArticleDetails((articleDetails) => {
+          return {
+            ...articleDetails,
+            error: 'Not able to fetch articles!',
+          };
+        })
       );
-  }
-  handlePagination = (pageIndex) => {
-    this.setState({ activePageIndex: pageIndex });
+  }, [activePageIndex, activeTag, activeNav]);
+
+  const handleNavigation = (tab) => {
+    setArticleDetails((articleDetails) => {
+      return {
+        ...articleDetails,
+        activeTag: '',
+        activeNav: tab,
+        activePageIndex: 0,
+      };
+    });
   };
-  render() {
-    let {
-      articlesCount,
-      articlePerPage,
-      activePageIndex,
-      activeTag,
-      activeNav,
-    } = this.state;
-    return (
-      <main>
-        {/* <Banner /> */}
-        <div className="px-40">
-          <div className="flex">
-            <div className="w-8/12">
-              <FeedNav
-                activeTag={activeTag}
-                activeNav={activeNav}
-                handleNavigation={this.handleNavigation}
-              />
-              <Posts {...this.state} />
-            </div>
-            <div className="w-3/12 ml-12 mt-4">
-              <Tags addTagTab={this.addTagTab} activeTag={activeTag} />
-            </div>
-          </div>
-          {articlesCount <= 10 ? (
-            ''
-          ) : (
-            <Pagination
-              articlesCount={articlesCount}
-              articlePerPage={articlePerPage}
-              handlePagination={this.handlePagination}
-              activePageIndex={activePageIndex}
+  const addTagTab = (tag) => {
+    setArticleDetails((articleDetails) => {
+      return {
+        ...articleDetails,
+        activeTag: tag,
+        activeNav: '',
+        activePageIndex: 0,
+      };
+    });
+  };
+
+  const handlePagination = (pageIndex) => {
+    setArticleDetails((articleDetails) => {
+      return { ...articleDetails, activePageIndex: pageIndex };
+    });
+  };
+
+  return (
+    <main>
+      {/* <Banner /> */}
+      <div className="px-40">
+        <div className="flex">
+          <div className="w-8/12">
+            <FeedNav
+              activeTag={activeTag}
+              activeNav={activeNav}
+              handleNavigation={handleNavigation}
             />
-          )}
+            <Posts {...articleDetails} />
+          </div>
+          <div className="w-3/12 ml-12 mt-4">
+            <Tags addTagTab={addTagTab} activeTag={activeTag} />
+          </div>
         </div>
-      </main>
-    );
-  }
+        {articlesCount <= 10 ? (
+          ''
+        ) : (
+          <Pagination
+            articlesCount={articlesCount}
+            articlePerPage={articlePerPage}
+            handlePagination={handlePagination}
+            activePageIndex={activePageIndex}
+          />
+        )}
+      </div>
+    </main>
+  );
 }
