@@ -9,7 +9,7 @@ export default class FeedNav extends Component {
         <ul className="border-b flex">
           {this.context.user && (
             <li
-              className={`text-gray-400 px-6 pb-2 ${
+              className={`text-gray-400 px-6 pb-2 cursor-pointer ${
                 !activeTag && activeNav === 'your'
                   ? 'border-b-2 border-green-500'
                   : ''
@@ -22,7 +22,7 @@ export default class FeedNav extends Component {
             </li>
           )}
           <li
-            className={`text-gray-400 px-6 pb-2 ${
+            className={`text-gray-400 px-6 pb-2 cursor-pointer ${
               !activeTag && activeNav === 'global'
                 ? 'border-b-2 border-green-500'
                 : ''
@@ -35,7 +35,7 @@ export default class FeedNav extends Component {
           </li>
           {activeTag && (
             <li
-              className={`text-gray-400 px-6 pb-2 ${
+              className={`text-gray-400 px-6 pb-2 cursor-pointer ${
                 activeTag ? 'border-b-2 border-green-500' : ''
               }`}
             >
