@@ -23,7 +23,7 @@ function Setting(props) {
   const [profile, setProfile] = useState(initialProfileState);
   console.log(profile, 'profile11');
   let { image, username, bio, email, password, errors } = profile;
-  let { user, updateUser } = useContext(UserContext);
+  let { user, updateUser, removeUser } = useContext(UserContext);
   useEffect(() => {
     let { username, email, image, bio } = user;
     setProfile((profile) => {
@@ -48,6 +48,7 @@ function Setting(props) {
   };
   const handleLogout = () => {
     localStorage.clear();
+    removeUser();
     props.history.push('/');
   };
   const handleSubmit = (event) => {
