@@ -5,8 +5,8 @@ import { withRouter } from 'react-router';
 import UserContext from './UserContext';
 function Login(props) {
   const initialUserSTate = {
-    email: 'username5@gmail.com',
-    password: 'username5',
+    email: '',
+    password: '',
     errors: {
       email: '',
       password: '',
